@@ -95,7 +95,7 @@ async function run() {
         issue_number: context.payload.pull_request.number,
         body: `### 🛡️ Architecture Guard Report\n\n${analysisResults}\n\n---\n*Verified by CodeArts Pipeline Intelligence*`
       });
-      core.warning('Architecture compliance issues identified.');
+      core.setFailed('Architecture compliance issues identified. Please fix them before merging.');
     } else {
       core.info('No architectural issues found.');
     }
