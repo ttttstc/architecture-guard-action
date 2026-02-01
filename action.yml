@@ -1,0 +1,20 @@
+name: 'Architecture Guard'
+description: 'AI-powered architecture compliance check for your pull requests.'
+author: 'ni ni'
+inputs:
+  github-token:
+    description: 'GitHub token for PR commenting'
+    required: true
+  ai-api-key:
+    description: 'Google Gemini API Key'
+    required: true
+  architecture-rules:
+    description: 'Specific rules to enforce (e.g., No DB calls in controllers)'
+    required: true
+    default: 'Strict layering and solid principles.'
+runs:
+  using: 'node20'
+  main: 'dist/index.js'
+branding:
+  icon: 'shield'
+  color: 'blue'
