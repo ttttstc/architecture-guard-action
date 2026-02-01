@@ -1,17 +1,19 @@
 # Architecture Guard Action 🛡️
 
-AI-powered architecture compliance check for your GitHub Pull Requests. Keep your codebase clean and structured with the power of Google Gemini.
+AI-powered & Rule-based architecture compliance check for your GitHub Pull Requests. Keep your codebase clean and structured with precision.
 
 ## 🚀 Overview
 
-**Architecture Guard** acts as an automated Senior Architect in your CI/CD pipeline. It reviews every code change (Diff) in a Pull Request against your specific architecture rules and provides actionable feedback directly in the PR comments.
+**Architecture Guard** acts as an automated Senior Architect in your CI/CD pipeline. It scans every **newly added line** of code in a Pull Request against classic architectural principles and modern design patterns.
 
-## ✨ Features
+## ✨ Key Features
 
-- **Semantic Review**: Beyond simple linting, it understands the *intent* and *logic* of your code changes.
-- **Custom Rules**: Define your own architecture "bill of rights" (e.g., "Controllers must not call Repository layer directly").
-- **Actionable Feedback**: Precise suggestions on which lines to refactor and why.
-- **Powered by Gemini Pro**: High-reasoning AI ensures deep architectural understanding.
+- **Precision Scanning**: Targets only the changed lines (Diff) to avoid noise from legacy code.
+- **Detailed Reporting**: Generates a professional Markdown table in your PR comments with **File Name** and **Line Number**.
+- **Hybrid Engine**:
+  - **Built-in Rules**: Instant, offline detection of layering violations, hardcoded secrets, and design smells.
+  - **AI Insight (Optional)**: Leverages Google Gemini for deep semantic architectural review.
+- **Actionable Guidance**: Provides specific refactoring suggestions for every violation found.
 
 ## 🛠️ Usage
 
@@ -26,6 +28,9 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write # Required for posting the report
+      contents: read       # Required for fetching code diff
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -33,21 +38,25 @@ jobs:
       - name: Run Architecture Guard
         uses: ttttstc/architecture-guard-action@main
         with:
+          engine: 'builtin' # Choices: "builtin", "ai", "hybrid"
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          ai-api-key: ${{ secrets.GEMINI_API_KEY }}
-          architecture-rules: |
-            1. Strictly follow the Layered Architecture.
-            2. Business logic should stay in the Service layer.
-            3. No raw SQL queries allowed in Controllers.
 ```
 
 ## ⚙️ Inputs
 
-| Input | Description | Required |
-| :--- | :--- | :--- |
-| `github-token` | The GitHub Token for commenting on PRs. | Yes |
-| `ai-api-key` | Your Google Gemini API Key. | Yes |
-| `architecture-rules` | The rules AI should enforce. | Yes |
+| Input | Description | Required | Default |
+| :--- | :--- | :--- | :--- |
+| `engine` | Scanning mode: `builtin`, `ai`, or `hybrid` | No | `builtin` |
+| `github-token` | The GitHub Token for PR interaction. | Yes | N/A |
+| `ai-api-key` | Google Gemini API Key (for `ai`/`hybrid` modes). | No | N/A |
+| `architecture-rules` | Custom rules for AI analysis. | No | Solid principles |
+
+## 📄 Built-in Rules Library
+
+- **Layering Violation**: Detects direct database driver access from UI/Controller layers.
+- **Security Check**: Identifies hardcoded secrets like passwords and API keys.
+- **Design Patterns**: Spots incorrect Singleton implementations and other pattern misuses.
+- **Maintainability**: Flags "Fat Interfaces" that violate the Interface Segregation Principle (ISP).
 
 ## 📄 License
 
